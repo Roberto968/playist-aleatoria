@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>🎧 DJ Music Player</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      background-image: url('fondo.jpeg');
+      background-size: cover;
+      background-position: center;
+    }
+    .container {
+      padding: 20px;
+      background-color: rgba(0,0,0,0.7);
+      max-width: 1000px;
+      margin: 30px auto;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #f9d342;
+    }
+    h1 {
+      text-align: center;
+      color: #f9d342;
+      font-size: 2.5em;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 15px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 1em;
+    }
+    #songList li {
+      list-style: none;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #222;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #songList li:hover {
+      background-color: #f9d342;
+      color: #111;
+    }
+    .player-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .cover-img {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 15px #f9d342;
+    }
+    audio {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .lyrics {
+      background: #222;
+      padding: 10px;
+      margin: 10px 0;
+      height: 200px;
+      overflow-y: auto;
+      border-radius: 10px;
+      scroll-behavior: smooth;
+      white-space: pre-wrap;
+    }
+    .likes-comments {
+      margin-top: 15px;
+      text-align: left;
+    }
+    .likes {
+      cursor: pointer;
+      color: #f9d342;
+      margin-bottom: 10px;
+    }
+    .comments input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+      margin-top: 5px;
+    }
+    .comments-list {
+      max-height: 100px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+    .download-link {
+      margin-top: 10px;
+      display: inline-block;
+      color: #fff;
+      background: #f9d342;
+      padding: 8px 15px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎧 DJ Music Player 🎶</h1>
+    <input type="text" id="searchInput" placeholder="🔍 Buscar canción...">
+    <ul id="songList">
+      <li onclick="playSong('Ya No Te Hago Falta.mpeg')">🎵 1. Ya No Te Hago Falta</li>
+      <li onclick="playSong('Ace of Base - Happy Nation.mpeg')">🎶 2. Ace of Base - Happy Nation</li>
+      <li onclick="playSong('Freddie Dredd - Limbo.mpeg')">🎧 3. Freddie Dredd - Limbo</li>
+      <li onclick="playSong('Napoleon Song.mpeg')">🎼 4. Napoleon Song</li>
+      <li onclick="playSong('Gata Only.mpeg')">🐱 5. Gata Only</li>
+      <li onclick="playSong('Lovesick ($100 Speedup).mpeg')">💘 6. Lovesick ($100 Speedup)</li>
+      <li onclick="playSong('2Pac & Pop Smoke - Write This Down.mpeg')">🔥 7. 2Pac & Pop Smoke</li>
+      <li onclick="playSong('Yung Kai - Blue.mpeg')">🌊 8. Yung Kai - Blue</li>
+      <li onclick="playSong('Frozy Mwizz - Don\'t Copy My Flow.mpeg')">🌀 9. Frozy Mwizz</li>
+      <li onclick="playSong('Sevdaliza - Ride Or Die.mpeg')">🚗 10. Sevdaliza - Ride Or Die</li>
+    </ul>
+
+    <div class="player-section">
+      <img id="coverImage" class="cover-img" src="" alt="Cover">
+      <audio id="audioPlayer" controls></audio>
+      <div class="lyrics" id="lyricsBox">🎤 Letra de la canción aparecerá aquí...</div>
+      <div class="likes-comments">
+        <div class="likes" onclick="likeSong()">👍 Like (<span id="likeCount">0</span>)</div>
+        <div class="comments">
+          <input type="text" id="commentInput" placeholder="💬 Escribe tu comentario...">
+          <div class="comments-list" id="commentsList"></div>
+        </div>
+        <a id="downloadLink" class="download-link" href="#" download>⬇️ Descargar Canción</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const lyricsData = {
+      "Ya No Te Hago Falta.mpeg": `Ya no te hago falta
+Lo puedo ver en tu mirada
+Ya no tiemblas cuando me acerco
+Ni me abrazas con el alma
+
+Ya no me extrañas
+Ya no suspiras por verme
+Te volviste indiferente
+Y yo sigo aquí, como siempre...
+
+Pero te vas, sin decirme adiós
+Dejando mil palabras sin voz
+Te vas, dejando un vacío
+Donde antes había amor...`,
+
+      "Ace of Base - Happy Nation.mpeg": "Happy nation, living in a happy nation...",
+      "Freddie Dredd - Limbo.mpeg": "Limbo lyrics rolling as you vibe...",
+      "Napoleon Song.mpeg": "There is nothing we can do...",
+      "Gata Only.mpeg": "Gata Only en la disco, moviendo lento...",
+      "Lovesick ($100 Speedup).mpeg": "I’m lovesick, I move quick...",
+      "2Pac & Pop Smoke - Write This Down.mpeg": "Write this down, legendary vibes...",
+      "Yung Kai - Blue.mpeg": "Blue dreams, lonely nights...",
+      "Frozy Mwizz - Don't Copy My Flow.mpeg": "Don't copy my flow, you know I glow...",
+      "Sevdaliza - Ride Or Die.mpeg": "Ride or die, burning fire inside..."
+    };
+
+    let likeCount = 0;
+    let currentSong = '';
+    let scrollInterval;
+
+    function playSong(filename) {
+      const audio = document.getElementById('audioPlayer');
+      const lyricsBox = document.getElementById('lyricsBox');
+
+      audio.src = filename;
+      audio.play();
+      currentSong = filename;
+
+      document.getElementById('coverImage').src = filename.replace('.mpeg', '.jpg');
+      lyricsBox.textContent = lyricsData[filename] || "Letra no disponible.";
+      lyricsBox.scrollTop = 0;
+
+      likeCount = 0;
+      document.getElementById('likeCount').textContent = likeCount;
+
+      document.getElementById('commentsList').innerHTML = "";
+      document.getElementById('downloadLink').href = filename;
+
+      clearInterval(scrollInterval);
+      scrollLyrics();
+    }
+
+    function scrollLyrics() {
+      const lyricsBox = document.getElementById('lyricsBox');
+      scrollInterval = setInterval(() => {
+        lyricsBox.scrollTop += 1;
+        if (lyricsBox.scrollTop + lyricsBox.clientHeight >= lyricsBox.scrollHeight) {
+          clearInterval(scrollInterval);
+        }
+      }, 100); // velocidad del desplazamiento
+    }
+
+    document.getElementById('audioPlayer').addEventListener('pause', () => {
+      clearInterval(scrollInterval);
+    });
+
+    function likeSong() {
+      likeCount++;
+      document.getElementById('likeCount').textContent = likeCount;
+    }
+
+    document.getElementById('commentInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter' && this.value.trim() !== "") {
+        const comment = document.createElement('div');
+        comment.textContent = this.value;
+        document.getElementById('commentsList').appendChild(comment);
+        this.value = "";
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const filter = this.value.toLowerCase();
+      const items = document.querySelectorAll('#songList li');
+      items.forEach(li => {
+        li.style.display = li.textContent.toLowerCase().includes(filter) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>
